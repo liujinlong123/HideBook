@@ -1,0 +1,12 @@
+{
+  "name": "HideBook",
+  "description": "hide book",
+  "uuid": "1048338958@qq.com",
+  "shell-version": [
+    "42",
+    "43"
+  ],
+  "settings-schema": "org.gnome.shell.extensions.hidebook",
+  "url": "https://github.com/liujinlong123/unite-shell",
+  "version": "1"
+}
