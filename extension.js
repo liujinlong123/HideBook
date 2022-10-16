@@ -80,20 +80,9 @@ class Extension {
         this._indicator = new Indicator();
         // Main.panel.addToStatusArea(this._uuid, this._indicator);
 
-        this.settings = ExtensionUtils.getSettings(
-            'org.gnome.shell.extensions.hidebook');
+        this.settings = ExtensionUtils.getSettings(Utils.HIDEBOOK_SCHEMA);
 
         let indicatorName = `${Me.metadata.name} Indicator`;
-
-        // Create a panel button
-        // this._indicator = new PanelMenu.Button(0.0, indicatorName, false);
-
-        // Add an icon
-        let icon = new St.Icon({
-            gicon: new Gio.ThemedIcon({ name: 'face-laugh-symbolic' }),
-            style_class: 'system-status-icon'
-        });
-        // this._indicator.add_child(icon);
 
         // Bind our indicator visibility to the GSettings value
         //
