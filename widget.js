@@ -11,6 +11,8 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Gio = imports.gi.Gio;
 
+const rootDir = 'Downloads/book/hidebook/';
+
 /**
  * Shows a preview of the next wallpaper to be set.
  */

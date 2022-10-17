@@ -59,8 +59,8 @@ const Indicator = GObject.registerClass(
             let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
             this.menu.addMenuItem(item);
 
-            let currentImg = new Widget.NextWallpaperWidget();
-            this.menu.addMenuItem(currentImg.item);
+            // let currentImg = new Widget.NextWallpaperWidget();
+            // this.menu.addMenuItem(currentImg.item);
 
             // 设置控制条
             this._setControl();
@@ -108,6 +108,21 @@ const Indicator = GObject.registerClass(
         // 重置
         _resetImage() {
             log(" ------> 重置");
+
+            let imageList = new Array();
+
+            let root_file = Gio.file_new_for_path('Downloads/book/hidebook/');
+            let childs = root_file.enumerate_children('standard::', Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+            while (true) {
+                const info = childs.next_file(null);
+                
+                if (info == null)
+                    break;
+                    
+                // log(info.get_name()); 
+                imageList.push(info.get_name());
+            }
+            log(imageList);
         }
 
         // 上一页
