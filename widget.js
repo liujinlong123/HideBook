@@ -9,6 +9,8 @@ const Clutter = imports.gi.Clutter;
 const Cogl = imports.gi.Cogl;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
+const Gio = imports.gi.Gio;
+
 /**
  * Shows a preview of the next wallpaper to be set.
  */
@@ -30,6 +32,7 @@ var NextWallpaperWidget = GObject.registerClass({},
 
             // The computer-picture:
             let screen_image = Me.dir.get_child('image').get_child("notification.png");
+            // let screen_image = Gio.file_new_for_path('Downloads/2022-08-29_10-37.png');
 
             let initial_pixbuf = Pixbuf.Pixbuf.new_from_file(screen_image.get_path());
 

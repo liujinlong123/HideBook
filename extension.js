@@ -34,7 +34,14 @@ const Convenience = Me.imports.convenience;
 
 const Gio = imports.gi.Gio;
 
+// https://www.cs.uni.edu/~okane/Code/Glade%20Cookbook/37b%20Running%20GTK%20on%20Windows%2010%20using%20Visual%20C++/share/icons/Adwaita/32x32/actions/
 const ICON_PREVIOUS_BUTTON = 'media-seek-backward-symbolic';
+const ICON_NEXT_BUTTON = 'media-seek-forward-symbolic';
+const ICON_REFRESH = 'view-refresh-symbolic';
+
+// edit-redo-symbolic-rtl.symbolic.png
+// 	edit-undo-symbolic.symbolic.png
+const ICON_RESET = 'mail-reply-sender-symbolic';
 
 const _ = ExtensionUtils.gettext;
 
@@ -52,8 +59,8 @@ const Indicator = GObject.registerClass(
             let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
             this.menu.addMenuItem(item);
 
-            // let currentImg = new Widget.NextWallpaperWidget();
-            // this.menu.addMenuItem(currentImg.item);
+            let currentImg = new Widget.NextWallpaperWidget();
+            this.menu.addMenuItem(currentImg.item);
 
             // 设置控制条
             this._setControl();
@@ -64,11 +71,29 @@ const Indicator = GObject.registerClass(
             this.controlItem = new PopupMenu.PopupMenuItem("");
             this.menu.addMenuItem(this.controlItem);
 
-            // 前一页
+            // 重置
+            this.resetBtn = this._newMenuIcon(
+                ICON_RESET,
+                this.controlItem,
+                this._resetImage);
+
+            // 上一页
             this.prevBtn = this._newMenuIcon(
                 ICON_PREVIOUS_BUTTON,
                 this.controlItem,
                 this._prevImage);
+            
+            // 刷新
+            this.refreshBtn = this._newMenuIcon(
+                ICON_REFRESH, 
+                this.controlItem, 
+                this._refreshImage);
+
+            // 下一页
+            this.nextBtn = this._newMenuIcon(
+                ICON_NEXT_BUTTON,
+                this.controlItem,
+                this._nextImage);
         }
 
         // set indicator icon (tray icon)
@@ -80,9 +105,25 @@ const Indicator = GObject.registerClass(
             getActorCompat(this).add_child(this.icon);
         }
 
+        // 重置
+        _resetImage() {
+            log(" ------> 重置");
+        }
+
         // 上一页
         _prevImage() {
             // this._gotoImage(-1);
+            log(" ------> 上一页");
+        }
+
+        // 刷新
+        _refreshImage() {
+            log(" ------> 刷新");
+        }
+
+        // 下一页
+        _nextImage() {
+            log(" ------> 下一页");
         }
 
         _newMenuIcon(icon_name, parent, fn, position = null) {
