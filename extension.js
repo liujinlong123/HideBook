@@ -69,6 +69,17 @@ const Indicator = GObject.registerClass(
             // 设置控制条
             this._setControl();
 
+            // 监听
+            this.menu.connect('open-state-changed', (menu, open) => {
+                if (open) {
+                    // log(' ------> 打开了');
+                } else {
+                    // log(' ------> 关闭了');
+                    this.isHide = true;
+                    this.currentImg.setDefault();
+                }
+            });
+
             // 类变量
             this._settings = ExtensionUtils.getSettings(Utils.HIDEBOOK_SCHEMA);
 
