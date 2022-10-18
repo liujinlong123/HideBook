@@ -32,6 +32,7 @@ const Widget = Me.imports.widget;
 const Utils = Me.imports.utils;
 const Convenience = Me.imports.convenience;
 
+// https://gjs-docs.gnome.org/gio20~2.66p/
 const Gio = imports.gi.Gio;
 
 // https://www.cs.uni.edu/~okane/Code/Glade%20Cookbook/37b%20Running%20GTK%20on%20Windows%2010%20using%20Visual%20C++/share/icons/Adwaita/32x32/actions/
@@ -56,8 +57,11 @@ const Indicator = GObject.registerClass(
             // 设置Icon
             this._setIcon();
 
-            let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
+            let item = new PopupMenu.PopupMenuItem(_('Refresh Now'));
             this.menu.addMenuItem(item);
+            item.connect('activate', () => {
+                this._refreshImage();
+            });
 
             this.currentImg = new Widget.NextWallpaperWidget();
             this.menu.addMenuItem(this.currentImg.item);

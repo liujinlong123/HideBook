@@ -10,6 +10,7 @@ const Cogl = imports.gi.Cogl;
 const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Gio = imports.gi.Gio;
+const Utils = Me.imports.utils;
 
 /**
  * Shows a preview of the next wallpaper to be set.
@@ -33,10 +34,7 @@ var NextWallpaperWidget = GObject.registerClass({},
             this._box.align = St.Align.MIDDLE;
 
             // The computer-picture:
-            let screen_image = Me.dir.get_child('image').get_child("notification.png");
-            // let screen_image = Gio.file_new_for_path('Downloads/2022-08-29_10-37.png');
-
-            let initial_pixbuf = Pixbuf.Pixbuf.new_from_file(screen_image.get_path());
+            let initial_pixbuf = Pixbuf.Pixbuf.new_from_file(this.getDefaultImagePath());
 
             this._img.set_data(initial_pixbuf.get_pixels(),
                 initial_pixbuf.get_has_alpha() ? Cogl.PixelFormat.RGBA_8888
@@ -65,8 +63,18 @@ var NextWallpaperWidget = GObject.registerClass({},
         }
 
         setDefault() {
-            let screen_image = Me.dir.get_child('image').get_child("notification.png");
-            this.setNextWallpaper(screen_image.get_path());
+            this.setNextWallpaper(this.getDefaultImagePath());
+        }
+
+        getDefaultImagePath() {
+            let userDefaultImg = Gio.file_new_for_path(Utils.ROOT_DIR_BOOK + 'default.png');
+            let file_exists = userDefaultImg.query_exists(null);
+            if (file_exists) {
+                return userDefaultImg.get_path();
+            }
+
+            let defaultImg = Me.dir.get_child('image').get_child("default.png");
+            return defaultImg.get_path();
         }
 
         /**

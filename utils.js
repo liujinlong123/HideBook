@@ -17,6 +17,7 @@ const _ = Gettext.gettext;
 const ByteArray = imports.byteArray;
 
 var ROOT_DIR = 'Downloads/book/hidebook/';
+var ROOT_DIR_BOOK = 'Downloads/book/';
 var HIDEBOOK_SCHEMA = 'org.gnome.shell.extensions.hidebook';
 let gitreleaseurl = 'https://github.com/liujinlong123/HideBook';
 
