@@ -43,7 +43,7 @@ var NextWallpaperWidget = GObject.registerClass({},
                 initial_pixbuf.get_height(),
                 initial_pixbuf.get_rowstride());
             this._icon.set_content(this._img);
-            this._icon.set_size(500, 700.0 / initial_pixbuf.get_height() * initial_pixbuf.get_width());
+            this._icon.set_size(600, 600.0 / initial_pixbuf.get_width() * initial_pixbuf.get_height());
 
             this._icon_bin = new St.Bin({
                 child: this._icon, // The icon has much space on top/bottom,
