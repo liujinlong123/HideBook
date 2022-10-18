@@ -37,11 +37,11 @@ const Gio = imports.gi.Gio;
 // https://www.cs.uni.edu/~okane/Code/Glade%20Cookbook/37b%20Running%20GTK%20on%20Windows%2010%20using%20Visual%20C++/share/icons/Adwaita/32x32/actions/
 const ICON_PREVIOUS_BUTTON = 'media-seek-backward-symbolic';
 const ICON_NEXT_BUTTON = 'media-seek-forward-symbolic';
-const ICON_REFRESH = 'view-refresh-symbolic';
+const ICON_SWITCH = 'media-playlist-shuffle-symbolic';
 
 // edit-redo-symbolic-rtl.symbolic.png
 // 	edit-undo-symbolic.symbolic.png
-const ICON_RESET = 'mail-reply-sender-symbolic';
+const ICON_RESET = 'view-refresh-symbolic';
 
 const _ = ExtensionUtils.gettext;
 
@@ -59,11 +59,24 @@ const Indicator = GObject.registerClass(
             let item = new PopupMenu.PopupMenuItem(_('Show Notification'));
             this.menu.addMenuItem(item);
 
-            // let currentImg = new Widget.NextWallpaperWidget();
-            // this.menu.addMenuItem(currentImg.item);
+            this.currentImg = new Widget.NextWallpaperWidget();
+            this.menu.addMenuItem(this.currentImg.item);
 
             // 设置控制条
             this._setControl();
+
+            // 类变量
+            this._settings = ExtensionUtils.getSettings(Utils.HIDEBOOK_SCHEMA);
+
+            this.imageList = Utils.getImageList();
+            this.picIndex = 0;
+
+            let cacheIndex = this._settings.get_int('current-index');
+            if (cacheIndex >= 0 && cacheIndex < this.imageList.length) {
+                this.picIndex = cacheIndex;
+            }
+
+            this.isHide = true;
         }
 
         // 设置控制条
@@ -82,11 +95,11 @@ const Indicator = GObject.registerClass(
                 ICON_PREVIOUS_BUTTON,
                 this.controlItem,
                 this._prevImage);
-            
+
             // 刷新
             this.refreshBtn = this._newMenuIcon(
-                ICON_REFRESH, 
-                this.controlItem, 
+                ICON_SWITCH,
+                this.controlItem,
                 this._refreshImage);
 
             // 下一页
@@ -99,7 +112,7 @@ const Indicator = GObject.registerClass(
         // set indicator icon (tray icon)
         _setIcon() {
             Utils.validate_icon();
-            let gicon = Gio.icon_new_for_string(Me.dir.get_child('icons').get_path() + '/book.svg');
+            let gicon = Gio.icon_new_for_string(Me.dir.get_path() + '/icons/book.svg');
             this.icon = new St.Icon({ gicon: gicon, style_class: 'system-status-icon' });
             getActorCompat(this).remove_all_children();
             getActorCompat(this).add_child(this.icon);
@@ -107,38 +120,61 @@ const Indicator = GObject.registerClass(
 
         // 重置
         _resetImage() {
-            log(" ------> 重置");
+            this.picIndex = 0;
+            this.imageList = Utils.getImageList();
+            this._settings.set_int('current-index', this.picIndex);
 
-            let imageList = new Array();
-
-            let root_file = Gio.file_new_for_path('Downloads/book/hidebook/');
-            let childs = root_file.enumerate_children('standard::', Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
-            while (true) {
-                const info = childs.next_file(null);
-                
-                if (info == null)
-                    break;
-                    
-                // log(info.get_name()); 
-                imageList.push(info.get_name());
-            }
-            log(imageList);
+            this.currentImg.setDefault();
         }
 
         // 上一页
         _prevImage() {
-            // this._gotoImage(-1);
-            log(" ------> 上一页");
+            if (this.picIndex < 1) {
+                Main.notify(_('index = ' + this.picIndex));
+                return;
+            }
+
+            if (this.imageList.length < 1) {
+                Main.notify(_('image list is empty!'));
+                return;
+            }
+
+            this.picIndex--;
+            if (this.picIndex < 0) this.picIndex = 0;
+            this.currentImg.setNextWallpaper(Utils.ROOT_DIR + this.imageList[this.picIndex]);
+            this._settings.set_int('current-index', this.picIndex);
         }
 
         // 刷新
         _refreshImage() {
-            log(" ------> 刷新");
+            this.isHide = !this.isHide;
+            if (this.isHide) {
+                this.currentImg.setDefault();
+            } else {
+                if (this.picIndex >= 0 && this.picIndex < this.imageList.length) {
+                    this.currentImg.setNextWallpaper(Utils.ROOT_DIR + this.imageList[this.picIndex]);
+                }
+            }
         }
 
         // 下一页
         _nextImage() {
-            log(" ------> 下一页");
+            if (this.picIndex >= this.imageList.length - 1) {
+                Main.notify(_('It`s the last picture, no next!'));
+                return;
+            }
+
+            if (this.imageList.length < 1) {
+                Main.notify(_('image list is empty!'));
+                return;
+            }
+
+            this.picIndex++;
+            if (this.picIndex >= this.imageList.length) {
+                this.picIndex = this.imageList.length - 1;
+            }
+            this.currentImg.setNextWallpaper(Utils.ROOT_DIR + this.imageList[this.picIndex]);
+            this._settings.set_int('current-index', this.picIndex);
         }
 
         _newMenuIcon(icon_name, parent, fn, position = null) {

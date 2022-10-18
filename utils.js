@@ -16,8 +16,8 @@ const Gettext = imports.gettext.domain('hidebook');
 const _ = Gettext.gettext;
 const ByteArray = imports.byteArray;
 
+var ROOT_DIR = 'Downloads/book/hidebook/';
 var HIDEBOOK_SCHEMA = 'org.gnome.shell.extensions.hidebook';
-
 let gitreleaseurl = 'https://github.com/liujinlong123/HideBook';
 
 function validate_icon(icon_image = null) {
@@ -25,4 +25,20 @@ function validate_icon(icon_image = null) {
         let pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_size(Me.dir.get_path() + '/icons/book.svg', 32, 32);
         icon_image.set_from_pixbuf(pixbuf);
     }
+}
+
+// 获取图片列表
+function getImageList() {
+    let imageList = new Array();
+    let root_file = Gio.file_new_for_path(ROOT_DIR);
+    let childs = root_file.enumerate_children('standard::', Gio.FileQueryInfoFlags.NOFOLLOW_SYMLINKS, null);
+    while (true) {
+        const info = childs.next_file(null);
+
+        if (info == null)
+            break;
+
+        imageList.push(info.get_name());
+    }
+    return imageList;
 }

@@ -11,10 +11,10 @@ const Me = imports.misc.extensionUtils.getCurrentExtension();
 
 const Gio = imports.gi.Gio;
 
-const rootDir = 'Downloads/book/hidebook/';
-
 /**
  * Shows a preview of the next wallpaper to be set.
+ * 文件操作: https://gjs.guide/guides/gio/file-operations.html#navigating-files-and-directories
+ * 官网内容: https://gjs.guide/guides/
  */
 var NextWallpaperWidget = GObject.registerClass({},
     class NextWallpaperWidget extends GObject.Object {
@@ -45,7 +45,7 @@ var NextWallpaperWidget = GObject.registerClass({},
                 initial_pixbuf.get_height(),
                 initial_pixbuf.get_rowstride());
             this._icon.set_content(this._img);
-            this._icon.set_size(500, 700);
+            this._icon.set_size(500, 100);
             // 1743 2440
 
             this._icon_bin = new St.Bin({
@@ -64,6 +64,10 @@ var NextWallpaperWidget = GObject.registerClass({},
             this._box.add(this._wallpaper);
         }
 
+        setDefault() {
+            let screen_image = Me.dir.get_child('image').get_child("notification.png");
+            this.setNextWallpaper(screen_image.get_path());
+        }
 
         /**
          * Load the next image to be set as the wallpaper into the widget.
