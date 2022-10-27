@@ -49,6 +49,10 @@ const _ = ExtensionUtils.gettext;
 const getActorCompat = (obj) =>
     Convenience.currentVersionGreaterEqual('3.33') ? obj : obj.actor;
 
+const sleep = time => {
+    return new Promise(resolve => setTimeout(resolve, time));
+};
+
 const Indicator = GObject.registerClass(
     class Indicator extends PanelMenu.Button {
         _init() {
@@ -75,8 +79,11 @@ const Indicator = GObject.registerClass(
                     // log(' ------> 打开了');
                 } else {
                     // log(' ------> 关闭了');
-                    this.isHide = true;
-                    this.currentImg.setDefault();
+                    sleep(500).then(() => {
+                        this.isHide = true;
+                        this.currentImg.setDefault();
+                    });
+
                 }
             });
 
@@ -160,7 +167,7 @@ const Indicator = GObject.registerClass(
             this._settings.set_int('current-index', this.picIndex);
         }
 
-        // 刷新
+        // 切换
         _refreshImage() {
             this.isHide = !this.isHide;
             if (this.isHide) {
